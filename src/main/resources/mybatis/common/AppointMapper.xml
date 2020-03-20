@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.school.appoint.common.dao.AppointDao">
+
+	<select id="get" resultType="com.school.appoint.common.domain.AppointDO">
+		select `id`,`user_id`,`doctor_id`,`status`,`appointTime`,`number`,`isChange` from appoint where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.school.appoint.common.domain.AppointDO">
+		select `id`,`user_id`,`doctor_id`,`status`,`appointTime`,`number`,`isChange` from appoint
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="doctorId != null and doctorId != ''"> and doctor_id = #{doctorId} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="appointtime != null and appointtime != ''"> and appointTime = #{appointtime} </if>
+		  		  <if test="number != null and number != ''"> and number = #{number} </if>
+		  		  <if test="ischange != null and ischange != ''"> and isChange = #{ischange} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from appoint
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="doctorId != null and doctorId != ''"> and doctor_id = #{doctorId} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="appointtime != null and appointtime != ''"> and appointTime = #{appointtime} </if>
+		  		  <if test="number != null and number != ''"> and number = #{number} </if>
+		  		  <if test="ischange != null and ischange != ''"> and isChange = #{ischange} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.school.appoint.common.domain.AppointDO" useGeneratedKeys="true" keyProperty="id">
+		insert into appoint
+		(
+			`user_id`, 
+			`doctor_id`, 
+			`status`, 
+			`appointTime`, 
+			`number`, 
+			`isChange`
+		)
+		values
+		(
+			#{userId}, 
+			#{doctorId}, 
+			#{status}, 
+			#{appointtime}, 
+			#{number}, 
+			#{ischange}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.school.appoint.common.domain.AppointDO">
+		update appoint 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="doctorId != null">`doctor_id` = #{doctorId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="appointtime != null">`appointTime` = #{appointtime}, </if>
+			<if test="number != null">`number` = #{number}, </if>
+			<if test="ischange != null">`isChange` = #{ischange}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from appoint where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from appoint where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
